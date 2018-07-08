@@ -1,5 +1,5 @@
 {
-  "name": "taiwanwatch-main-site-api",
+  "name": "frontend-api",
   "version": "0.0.1",
   "description": "Taiwan Watch Main Site - APIs",
   "main": "handler.js",
