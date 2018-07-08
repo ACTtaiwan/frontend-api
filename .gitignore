@@ -1,0 +1,8 @@
+# package directories
+node_modules
+
+# Serverless directories
+.serverless
+
+# Visual Studio Code
+.vscode

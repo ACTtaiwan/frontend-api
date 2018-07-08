@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "REGION": "us-east-1"
+  },
+  "api": {
+    "ENDPOINT": "https://qeluq3hoff.execute-api.us-east-1.amazonaws.com/dev"
+  },
+  "s3": {
+    "STATIC_FILES_BUCKET_NAME": "taiwanwatch-static"
+  },
+  "dynamodb": {
+    "ARTICLES_TABLE_NAME": "articles"
+  }
+}
