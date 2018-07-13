@@ -56,7 +56,7 @@ class MemberResolver {
 
     return axios({
       method: 'GET',
-      url: '/billManagement/roles',
+      url: '/congressional/roles',
       params: {
         congress: congress.join(','),
         state: states.join(',')
@@ -102,7 +102,7 @@ class MemberResolver {
 
         return axios({
           method: 'GET',
-          url: '/billManagement/roles',
+          url: '/congressional/roles',
           params,
           headers: {}
         })

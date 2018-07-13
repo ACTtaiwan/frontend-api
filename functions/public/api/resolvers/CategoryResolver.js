@@ -11,7 +11,7 @@ class CategoryResolver {
   getCategories () {
     return axios({
       method: 'GET',
-      url: '/billManagement/billCategories',
+      url: '/congressional/billCategories',
       headers: {}
     })
       .then(response => Promise.resolve(response.data))
@@ -21,7 +21,7 @@ class CategoryResolver {
   getCategory ({ memberId }) {
     return axios({
       method: 'GET',
-      url: `/billManagement/billCategories/${memberId}`,
+      url: `/congressional/billCategories/${memberId}`,
       headers: {}
     })
       .then(response => Promise.resolve(response.data))

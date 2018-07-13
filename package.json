@@ -4,6 +4,7 @@
   "description": "Taiwan Watch Main Site - APIs",
   "main": "handler.js",
   "scripts": {
+    "deploy": "node_modules/serverless/bin/serverless deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -38,6 +39,7 @@
     "graphql": "^0.11.7",
     "graphql-server-lambda": "^1.2.0",
     "joi": "^10.6.0",
+    "serverless": "^1.28.0",
     "uuid": "^3.1.0"
   }
 }

@@ -51,7 +51,7 @@ class BillResolver {
 
     return axios({
       method: 'GET',
-      url: '/billManagement/bills',
+      url: '/congressional/bills',
       params: {
         congress: congress.join(','),
         categoryIdx: categories.join(',')
@@ -90,7 +90,7 @@ class BillResolver {
       chunckedIds.map(idsSubset => {
         return axios({
           method: 'GET',
-          url: '/billManagement/bills',
+          url: '/congressional/bills',
           params: {
             id: idsSubset.join(','),
             attrNamesToGet: this._mapQueryFieldsFromGraphqlToAws({ queryFields }).join(',')
