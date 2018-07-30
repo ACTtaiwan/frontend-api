@@ -1,5 +1,6 @@
 import axios from 'axios'
 import awsConfig from '~/config/aws'
+import * as _ from 'lodash'
 
 class ArticleResolver {
   constructor () {
@@ -15,10 +16,13 @@ class ArticleResolver {
     return awsConfig.dynamodb.ARTICLES_TABLE_NAME
   }
 
-  getArticles ({ ids = [], list = 'ustw' }) {
+  getArticles ({ list = 'ustw', limit, before }) {
+    let qsp = this._createQSP({limit, before})
+    let url = `/articles/list/${list}` + qsp
+    console.log('### ArticleResolver --> URL: ', url)
     return axios({
       method: 'GET',
-      url: `/articles/list/${list}`,
+      url,
       headers: {}
     })
       .then(response => {
@@ -27,6 +31,19 @@ class ArticleResolver {
         return Promise.resolve(result)
       })
       .catch(error => Promise.reject(error))
+  }
+
+  _createQSP (params) {
+    console.log('### ArticleResolver --> params: ', params)
+    if (_.isEmpty(params)) {
+      return ''
+    } else {
+      let kvPair = []
+      _.forEach(params, (val, key) => {
+        !!val && kvPair.push(`${key}=${encodeURIComponent(val)}`)
+      })
+      return '?' + kvPair.join('&')
+    }
   }
 }
 
