@@ -15,17 +15,17 @@ const ArticlesQuery = {
       type: new GraphQLList(GraphQLID),
       description: 'If ids is an empty array, then will only return queried articles ids as result'
     },
-    sources: {
-      type: new GraphQLList(GraphQLString),
-      description: 'The article source'
+    list: {
+      type: GraphQLString,
+      description: 'The article list source - "act" or "ustw"'
     }
   },
-  resolve: (root, { ids, sources }, source, info) => {
+  resolve: (root, { ids, list }, source, info) => {
     const utils = new Utils()
     const articleResolver = new ArticleResolver()
     console.log('INCOMING', JSON.stringify({ ids }, null, 2))
     const queryFields = utils.getSelectedFields(info.operation)
-    return articleResolver.getArticles({ ids, sources, queryFields })
+    return articleResolver.getArticles({ ids, list, queryFields })
   }
 }
 

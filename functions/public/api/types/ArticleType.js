@@ -5,12 +5,15 @@ const ArticleType = new GraphQLObjectType({
   description: 'Information of a article',
   fields: () => ({
     id: { type: GraphQLID },
-    prefetchIds: { type: new GraphQLList(GraphQLID) },
-    publishedAt: { type: GraphQLString },
+    readableId: { type: GraphQLString },
+    headline: { type: GraphQLString },
+    subhead: { type: GraphQLString },
+    author: { type: GraphQLString },
+    intro: { type: GraphQLString },
+    url: { type: GraphQLString },
     imageUrl: { type: GraphQLString },
-    source: { type: GraphQLString },
-    title: { type: GraphQLString },
-    url: { type: GraphQLString }
+    date: { type: GraphQLString },
+    sites: { type: new GraphQLList(GraphQLString) }
   })
 })
 
