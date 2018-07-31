@@ -7,8 +7,5 @@
   },
   "s3": {
     "STATIC_FILES_BUCKET_NAME": "taiwanwatch-static"
-  },
-  "dynamodb": {
-    "ARTICLES_TABLE_NAME": "articles"
   }
 }
