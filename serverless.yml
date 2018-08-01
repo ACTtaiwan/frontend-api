@@ -70,7 +70,7 @@ functions:
   # - authorizer: authenticate using the AWS IAM role
 
   api:
-    handler: functions/public/api/graphql.main
+    handler: functions/api/graphql.main
     events:
       - http:
           path: api
@@ -82,7 +82,7 @@ functions:
           cors: true
 
   graphiql:
-    handler: functions/public/api/graphiql.main
+    handler: functions/api/graphiql.main
     events:
       - http:
           path: graphiql
