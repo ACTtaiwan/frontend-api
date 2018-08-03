@@ -4,7 +4,7 @@ import ActionType from './ActionType'
 import VersionType from './VersionType'
 import RoleType from './RoleType'
 import CosponsorType from './CosponsorType'
-import CategoryType from './CategoryType'
+import TagType from './TagType'
 import BillTrackerType from './BillTrackerType'
 import BillSummaryType from './BillSummaryType'
 import ArticleType from './ArticleType'
@@ -22,7 +22,7 @@ const BillType = new GraphQLObjectType({
     introducedDate: { type: GraphQLString },
     lastUpdated: { type: GraphQLString },
     sponsor: { type: RoleType },
-    categories: { type: new GraphQLList(CategoryType) },
+    tags: { type: new GraphQLList(TagType) },
     cosponsors: { type: new GraphQLList(CosponsorType) },
     title: { type: GraphQLString },
     billNumber: { type: GraphQLInt },

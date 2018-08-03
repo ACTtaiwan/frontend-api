@@ -4,26 +4,27 @@ import awsConfig from '~/config/aws'
 class BillResolver {
   constructor () {
     axios.defaults.baseURL = awsConfig.api.ENDPOINT
-    // graphQL fields map to dynamoDb and S3
+    // graphQL fields map to Azure and S3
     this.FIELDS_MAP = {
-      congress: { dynamoDb: 'congress', s3: null },
-      actions: { dynamoDb: 'actions', s3: null },
-      actionsAll: { dynamoDb: 'actionsAll', s3: null },
-      billType: { dynamoDb: 'billType', s3: null },
-      id: { dynamoDb: 'id', s3: null },
-      prefetchIds: { dynamoDb: null, s3: null },
-      introducedDate: { dynamoDb: 'introducedDate', s3: null },
-      lastUpdated: { dynamoDb: 'lastUpdated', s3: null },
-      sponsor: { dynamoDb: 'sponsor', s3: null },
-      categories: { dynamoDb: 'categories', s3: null },
-      cosponsors: { dynamoDb: 'cosponsors', s3: null },
-      title: { dynamoDb: 'title', s3: null },
-      billNumber: { dynamoDb: 'billNumber', s3: null },
-      billCode: { dynamoDb: null, s3: null },
-      versions: { dynamoDb: 'versions', s3: null },
-      trackers: { dynamoDb: 'trackers', s3: null },
-      summary: { dynamoDb: null, s3: 'summaryLatest' },
-      articles: { dynamoDb: 'articles', s3: null }
+      congress: { azure: 'congress', s3: null },
+      actions: { azure: 'actions', s3: null },
+      actionsAll: { azure: 'actionsAll', s3: null },
+      billType: { azure: 'billType', s3: null },
+      id: { azure: 'id', s3: null },
+      prefetchIds: { azure: null, s3: null },
+      introducedDate: { azure: 'introducedDate', s3: null },
+      lastUpdated: { azure: 'lastUpdated', s3: null },
+      sponsor: { azure: 'sponsor', s3: null },
+      categories: { azure: 'categories', s3: null },
+      tags: { azure: 'tags', s3: null },
+      cosponsors: { azure: 'cosponsors', s3: null },
+      title: { azure: 'title', s3: null },
+      billNumber: { azure: 'billNumber', s3: null },
+      billCode: { azure: null, s3: null },
+      versions: { azure: 'versions', s3: null },
+      trackers: { azure: 'trackers', s3: null },
+      summary: { azure: null, s3: 'summaryLatest' },
+      articles: { azure: 'articles', s3: null }
     }
     this.getBills = this.getBills.bind(this)
   }
@@ -93,7 +94,7 @@ class BillResolver {
           url: '/congressional/bills',
           params: {
             id: idsSubset.join(','),
-            attrNamesToGet: this._mapQueryFieldsFromGraphqlToAws({ queryFields }).join(',')
+            attrNamesToGet: this._mapQueryFieldsFromGraphqlToAzure({ queryFields }).join(',')
           },
           headers: {}
         })
@@ -104,12 +105,14 @@ class BillResolver {
         const bills = result.reduce((accumulator, response) => {
           return [...accumulator, ...response.data]
         }, [])
-        // dynamoDb doesn't return result based on the order of provided bill ids
+        // Azure doesn't return result based on the order of provided bill ids
         // therefore, need to sort the bills based on the order of ids
         const billsMap = _.keyBy(bills, 'id')
         const sortedBills = ids.map(id => billsMap[id])
         // some fields might require queries to other systems
-        const hydratedBills = sortedBills.map(bill => self._mapBillFieldsFromAwsToGraphql({ bill }))
+        const hydratedBills = sortedBills.map(bill =>
+          self._mapBillFieldsFromAzureToGraphql({ bill })
+        )
 
         return Promise.resolve(hydratedBills)
       })
@@ -119,14 +122,14 @@ class BillResolver {
       })
   }
 
-  _mapQueryFieldsFromGraphqlToAws ({ queryFields }) {
+  _mapQueryFieldsFromGraphqlToAzure ({ queryFields }) {
     let attributes = []
     let isQueryInfoInE3 = false
 
     queryFields.forEach(query => {
-      // this data of this property resides in dynamoDb
-      if (this.FIELDS_MAP[query].dynamoDb) {
-        attributes.push(this.FIELDS_MAP[query].dynamoDb)
+      // this data of this property resides in Azure
+      if (this.FIELDS_MAP[query].azure) {
+        attributes.push(this.FIELDS_MAP[query].azure)
       }
 
       // this data of this property resides in s3
@@ -139,21 +142,24 @@ class BillResolver {
       attributes.push('s3Entity')
     }
 
-    console.log('### BillResolver._mapQueryFieldsFromGraphqlToAws --> attributes: ', JSON.stringify(attributes, null, 2))
+    console.log(
+      '### BillResolver._mapQueryFieldsFromGraphqlToAzure --> attributes: ',
+      JSON.stringify(attributes, null, 2)
+    )
     return attributes
   }
 
-  async _mapBillFieldsFromAwsToGraphql ({ bill }) {
+  async _mapBillFieldsFromAzureToGraphql ({ bill }) {
     let s3
     let normalizedBill = {}
 
     // loop through all fields in graphql schema type
     // to see if they are in the result
     for (var property in this.FIELDS_MAP) {
-      // the data of this property resides in dynamoDb
-      let dynamoDbPropName = this.FIELDS_MAP[property].dynamoDb
-      if (dynamoDbPropName && bill.hasOwnProperty(dynamoDbPropName)) {
-        normalizedBill[property] = bill[dynamoDbPropName]
+      // the data of this property resides in Azure
+      let azurePropName = this.FIELDS_MAP[property].azure
+      if (azurePropName && bill.hasOwnProperty(azurePropName)) {
+        normalizedBill[property] = bill[azurePropName]
       }
 
       // the data of this property resides in s3
@@ -161,13 +167,19 @@ class BillResolver {
       if (s3PropName && bill.hasOwnProperty('s3Entity')) {
         if (!s3) {
           s3 = await axios(bill.s3Entity)
-          console.log('### BillResolver._mapBillFieldsFromAwsToGraphql --> get s3 entity: ', JSON.stringify(s3.data, null, 2))
+          console.log(
+            '### BillResolver._mapBillFieldsFromAzureToGraphql --> get s3 entity: ',
+            JSON.stringify(s3.data, null, 2)
+          )
         }
         normalizedBill[property] = s3.data[s3PropName]
       }
     }
 
-    console.log('### BillResolver._mapBillFieldsFromAwsToGraphql --> normalized bill: ', JSON.stringify(normalizedBill, null, 2))
+    console.log(
+      '### BillResolver._mapBillFieldsFromAzureToGraphql --> normalized bill: ',
+      JSON.stringify(normalizedBill, null, 2)
+    )
     return normalizedBill
   }
 }

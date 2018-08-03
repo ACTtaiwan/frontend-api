@@ -8,16 +8,8 @@ class ArticleResolver {
     this.getArticles = this.getArticles.bind(this)
   }
 
-  get _awsRegion () {
-    return awsConfig.metadata.REGION
-  }
-
-  get _articlesTableName () {
-    return awsConfig.dynamodb.ARTICLES_TABLE_NAME
-  }
-
   getArticles ({ list = 'ustw', limit, before }) {
-    let qsp = this._createQSP({limit, before})
+    let qsp = this._createQSP({ limit, before })
     let url = `/articles/list/${list}` + qsp
     console.log('### ArticleResolver --> URL: ', url)
     return axios({
