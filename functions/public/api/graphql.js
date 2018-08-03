@@ -6,6 +6,8 @@ export async function main (event, context, callback) {
   //   schema
   // })
   // return handler(event, context, callback)
+  console.log(`event = ${JSON.stringify(event, null, 2)}`)
+  console.log(`context = ${JSON.stringify(context, null, 2)}`)
   const callbackFilter = function (error, output) {
     output.headers['Access-Control-Allow-Origin'] = '*'
     callback(error, output)
