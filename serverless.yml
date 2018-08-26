@@ -46,10 +46,8 @@ provider:
         - s3:PutObject
         - s3:PutObjectAcl
       Resource: "arn:aws:s3:::*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    BACKEND_API_KEY: ""
 
 # you can add packaging information here
 #package:
@@ -76,10 +74,12 @@ functions:
           path: api
           method: get
           cors: true
+          private: true
       - http:
           path: api
           method: post
           cors: true
+          private: true
 
   graphiql:
     handler: functions/api/graphiql.main
