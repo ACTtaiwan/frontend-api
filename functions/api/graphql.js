@@ -1,7 +1,7 @@
 import schema from './schema'
 const server = require('graphql-server-lambda')
 
-export async function main (event, context, callback) {
+export function main (event, context, callback) {
   // const handler = server.graphqlLambda({
   //   schema
   // })
