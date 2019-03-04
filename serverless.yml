@@ -20,10 +20,13 @@ service: frontend-api # NOTE: update this with your service name
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
   - serverless-webpack
+  - serverless-offline
 
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
+  serverless-offline:
+    port: 4000
 
 provider:
   name: aws
@@ -48,6 +51,7 @@ provider:
       Resource: "arn:aws:s3:::*"
   environment:
     BACKEND_API_KEY: ""
+    MY_API_KEY: ""
 
 # you can add packaging information here
 #package:
@@ -81,13 +85,19 @@ functions:
           cors: true
           private: true
 
-  graphiql:
-    handler: functions/api/graphiql.main
+  apiV2:
+    handler: functions/apiV2/server.main
     events:
       - http:
-          path: graphiql
+          path: api/v2
           method: get
           cors: true
+          private: true
+      - http:
+          path: api/v2
+          method: post
+          cors: true
+          private: true
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

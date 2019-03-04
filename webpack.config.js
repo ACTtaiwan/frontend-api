@@ -1,18 +1,28 @@
 var glob = require('glob')
 var path = require('path')
 var nodeExternals = require('webpack-node-externals')
+var _ = require('lodash')
+var webpack = require('webpack')
 
 // Required for Create React App Babel transform
 process.env.NODE_ENV = 'development'
 
 module.exports = {
+  mode: 'development',
   // Use all js files in project root (except
   // the webpack config) as an entry
-  entry: globEntries('functions/**/*.js'),
+  entry: _.merge(globEntries('functions/**/*.js'), globEntries('functions/**/*.ts')),
   target: 'node',
+  resolve: {
+    extensions: ['.js', '.json', '.ts', '.tsx']
+  },
+
   // Since 'aws-sdk' is not compatible with webpack,
   // we exclude all node dependencies
   externals: [nodeExternals()],
+  plugins: [
+    new webpack.LoaderOptionsPlugin({ options: {} })
+  ],
   // Run babel on all .js files and skip those in node_modules
   module: {
     rules: [
@@ -30,6 +40,24 @@ module.exports = {
         loader: 'babel-loader',
         include: __dirname,
         exclude: /node_modules/
+      },
+      {
+        test: /\.ts$/,
+        loader: 'tslint-loader',
+        enforce: 'pre',
+        include: __dirname,
+        exclude: /node_modules/,
+        options: {
+          configFile: 'tslint.json'
+        }
+      },
+      {
+        test: /\.ts(x?)$/,
+        use: [
+          {
+            loader: 'ts-loader'
+          }
+        ]
       }
     ]
   },
