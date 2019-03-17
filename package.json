@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "start": "IS_LOCAL=true node_modules/serverless/bin/serverless offline",
-    "deploy": "node_modules/serverless/bin/serverless deploy",
+    "deploy-dev": "node_modules/serverless/bin/serverless deploy --stage dev",
+    "deploy-prod": "node_modules/serverless/bin/serverless deploy --stage prod",
     "package": "node_modules/serverless/bin/serverless package",
     "ts-node": "node node_modules/ts-node/dist/bin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
