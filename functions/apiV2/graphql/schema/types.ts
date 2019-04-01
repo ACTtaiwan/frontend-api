@@ -191,7 +191,8 @@ const bill = gql`
     sponsor: Member,
     cosponsors: [Cosponsor],
     tags: [Tag],
-    articles: [Article]
+    articles: [Article],
+    gist: String
   }
 
   type Cosponsor {

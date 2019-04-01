@@ -29,7 +29,8 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
       'cosponsorProperty': {
         apiField: 'cosponsoredBills#date'
       }
-    }
+    },
+    remappedFields: {}
   });
 
   public resolve ({lang, ids, congress, states}: IMemberQuery, queryFields: rsvr.ProjectionField) {
@@ -41,7 +42,7 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
     if (isPrefetch) {
       return this.prefetchIds({ congress, states });
     } else {
-      return this.fetchObjects(ids, queryFields);
+      return this.fetchObjects(ids, queryFields, lang);
     }
   }
 
@@ -61,7 +62,7 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
       });
   }
 
-  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField): Promise<any[]> {
+  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField, lang?: string): Promise<any[]> {
     const fLog = this.logger.in('fetchObjects');
     fLog.log(`\nids = ${JSON.stringify(ids)}\nqueryFields = ${JSON.stringify(queryFields.toJSON())}`);
 
@@ -85,7 +86,7 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
       queryFields.setField('congressRoles', qryRole);
     }
 
-    let members = await this.helper.fetchObjects(ids, queryFields);
+    let members = await this.helper.fetchObjects(ids, queryFields, lang);
     members && (members = _.filter(members, m => m));
     return this.processPostGenerateFields(members, queryFields);
   }

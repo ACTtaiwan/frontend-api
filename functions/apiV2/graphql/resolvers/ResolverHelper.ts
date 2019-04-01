@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import * as request from 'request';
 
 export interface IIdObjectsFetcher {
-  fetchObjects (ids: string[], queryFields: rsvr.ProjectionField): Promise<any[]>;
+  fetchObjects (ids: string[], queryFields: rsvr.ProjectionField, lang?: string): Promise<any[]>;
 }
 
 export interface IAssocFieldDescriptor {
@@ -20,6 +20,7 @@ export interface IFieldsMappingDescriptor {
   readonly s3Fields: {[key: string]: string}; // GraphQL field -> fields in S3 Entity
   readonly assocFields: { [key: string]: IAssocFieldDescriptor };
   readonly gqlOnlyFields: string[]; // GraphQL-only fields. Never exists in backend API, DB, S3
+  readonly remappedFields: {[key: string]: string}; // map gql field names to different backend field names
 }
 
 export class ResolverHelper {
@@ -57,13 +58,15 @@ export class ResolverHelper {
           return x;
         }
       })
+      .flatten()
       .map(x => _.includes(_.keys(desc.s3Fields), x) ? 's3Entity' : x) // mapping S3 fields
+      .map(x => desc.remappedFields[x] || x)
       .uniq()
       .value();
     return _.flatten(apiFields);
   }
 
-  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField): Promise<any[]> {
+  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField, lang?: string): Promise<any[]> {
     const fLog = this.logger.in('fetchObjects');
 
     if (ids.length === 0) {
@@ -73,24 +76,31 @@ export class ResolverHelper {
     const chunckedIds = _.chunk(ids, 20);
     const apiFields = this.composeAPIQueryFields(queryFields);
     const apiResult = await Promise.all(
-      chunckedIds.map(idsSubset => APIClient.get('/v2', { id: idsSubset, field: apiFields }))
+      chunckedIds.map(idsSubset => {
+        let params = { id: idsSubset, field: apiFields };
+        if (lang) {
+          params['lang'] = lang;
+        }
+        return APIClient.get('/v2', params);
+      })
     );
     const apiObjs = ResolverHelper.processIdAndType(_.flatten(apiResult));
-    let gqlObjs = await Promise.all(_.map(apiObjs, b => this.transformToGraphql(b, queryFields)));
+    let gqlObjs = await Promise.all(_.map(apiObjs, b => this.transformToGraphql(b, queryFields, lang)));
     gqlObjs = this.sortResults(ids, gqlObjs);
     return Promise.resolve(gqlObjs);
   }
 
-  private async transformToGraphql (apiObj: any, queryFields: rsvr.ProjectionField) {
+  private async transformToGraphql (apiObj: any, queryFields: rsvr.ProjectionField, lang?: string) {
     const fLog = this.logger.in('transformToGraphql');
     const gqlObj = _.cloneDeep(apiObj);
-    await this.resolveS3Fields(apiObj, gqlObj, queryFields);
+    let s3Obj = await this.resolveS3Fields(gqlObj, queryFields);
     this.resolveNameMapping(apiObj, gqlObj);
-    await this.resolveAssociations(gqlObj, queryFields);
-    return Promise.resolve(gqlObj);
+    await this.resolveAssociations(gqlObj, queryFields, lang);
+    this.resolveRemappedFields(apiObj, gqlObj);
+    return Promise.resolve(_.merge(gqlObj, s3Obj));
   }
 
-  private async resolveS3Fields (apiObj: any, gqlObj: any, queryFields: rsvr.ProjectionField) {
+  private async resolveS3Fields (gqlObj: any, queryFields: rsvr.ProjectionField) {
     // process S3 entity
     const fLog = this.logger.in('resolveS3Fields');
     const desc = this.fieldsDesc;
@@ -100,14 +110,16 @@ export class ResolverHelper {
     const s3QryFields = _.pick(desc.s3Fields, gqlS3Fields);
     fLog.log(`s3QryFields = ${JSON.stringify(s3QryFields)}`);
 
-    if (!!apiObj.s3Entity) {
+    if (!!gqlObj.s3Entity) {
+      let s3Obj = {};
       const objExt = await new Promise((res, rej) =>
-        request.get(apiObj.s3Entity, (error, response, body) =>
+        request.get(gqlObj.s3Entity, (error, response, body) =>
           !error ? res(JSON.parse(body)) : rej(error)
         )
       );
-      _.each(s3QryFields, (val, key) => gqlObj[key] = objExt[val]);
+      _.each(s3QryFields, (val, key) => s3Obj[key] = objExt[val]);
       delete gqlObj.s3Entity;
+      return s3Obj;
     }
   }
 
@@ -122,7 +134,16 @@ export class ResolverHelper {
     });
   }
 
-  private async resolveAssociations (gqlObj: any, queryFields: rsvr.ProjectionField) {
+  private resolveRemappedFields (apiObj: any, gqlObj: any) {
+    _.each(this.fieldsDesc.remappedFields, (apiKey, gqlKey) => {
+      if (!!apiKey && apiObj[ apiKey ]) {
+        gqlObj[ gqlKey ] = apiObj[ apiKey ];
+        delete gqlObj[ apiKey ];
+      }
+    });
+  }
+
+  private async resolveAssociations (gqlObj: any, queryFields: rsvr.ProjectionField, lang?: string) {
     const fLog = this.logger.in('resolveAssociations');
     const desc = this.fieldsDesc;
 
@@ -145,7 +166,7 @@ export class ResolverHelper {
 
         const isOneToOne = fdesc.isOneToOne;
         const idx: string[] =  isOneToOne ? [ gqlObj[k] ] :  gqlObj[k];
-        const objs = await fdesc.fetcher.fetchObjects(idx, projField);
+        const objs = await fdesc.fetcher.fetchObjects(idx, projField, lang);
         gqlObj[k] = isOneToOne ? _.head(objs) : objs;
       }
       return gqlObj;
