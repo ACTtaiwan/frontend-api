@@ -11,12 +11,13 @@ export class TagResolver implements IIdObjectsFetcher {
       'tag': {
         apiField: 'name'
       }
-    }
+    },
+    remappedFields: {}
   });
 
-  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField): Promise<any[]> {
+  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField, lang?: string): Promise<any[]> {
     const fLog = this.logger.in('fetchObjects');
     fLog.log(`\nids = ${JSON.stringify(ids)}\nqueryFields = ${JSON.stringify(queryFields.toJSON())}`);
-    return await this.helper.fetchObjects(ids, queryFields);
+    return await this.helper.fetchObjects(ids, queryFields, lang);
   }
 }

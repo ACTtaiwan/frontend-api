@@ -15,9 +15,9 @@ interface IBillQuery {
 }
 
 class CosponsorResolver extends MemberResolver {
-  public fetchObjects (ids: string[], queryFields: rsvr.ProjectionField): Promise<any[]> {
+  public fetchObjects (ids: string[], queryFields: rsvr.ProjectionField, lang?: string): Promise<any[]> {
     const qry = queryFields.compositeFields['member'];
-    return super.fetchObjects(ids, qry);
+    return super.fetchObjects(ids, qry, lang);
   }
 }
 
@@ -50,7 +50,10 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
         isOneToOne: true
       }
     },
-    gqlOnlyFields: ['prefetchIds', 'billCode']
+    gqlOnlyFields: ['prefetchIds', 'billCode'],
+    remappedFields: {
+      'gist': 'summary'
+    }
   });
 
   public resolve ({lang, ids, congress}: IBillQuery, queryFields: rsvr.ProjectionField) {
@@ -62,7 +65,7 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
     if (isPrefetch) {
       return this.prefetchIds({ congress });
     } else {
-      return this.fetchObjects(ids, queryFields);
+      return this.fetchObjects(ids, queryFields, lang);
     }
   }
 
@@ -81,7 +84,7 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
       });
   }
 
-  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField): Promise<any[]> {
+  public async fetchObjects (ids: string[], queryFields: rsvr.ProjectionField, lang?: string): Promise<any[]> {
     const fLog = this.logger.in('fetchBills');
 
     // if querying 'billCode', then we need to query 'billType.display' && 'billNumber' field
@@ -94,7 +97,7 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
     }
 
     fLog.log(`\nids = ${JSON.stringify(ids)}\nqueryFields = ${JSON.stringify(queryFields.toJSON())}`);
-    let bills = await this.helper.fetchObjects(ids, queryFields);
+    let bills = await this.helper.fetchObjects(ids, queryFields, lang);
     return this.processPostGenerateFields(bills, queryFields);
   }
 

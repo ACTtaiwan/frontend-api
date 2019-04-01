@@ -6,6 +6,7 @@ node_modules
 
 # Visual Studio Code
 .vscode
+*.code-workspace
 
 # Serverless distributions
 .webpack
