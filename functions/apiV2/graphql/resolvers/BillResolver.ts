@@ -98,10 +98,10 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
 
     fLog.log(`\nids = ${JSON.stringify(ids)}\nqueryFields = ${JSON.stringify(queryFields.toJSON())}`);
     let bills = await this.helper.fetchObjects(ids, queryFields, lang);
-    return this.processPostGenerateFields(bills, queryFields);
+    return this.processPostGenerateFields(bills, queryFields, lang);
   }
 
-  private processPostGenerateFields (bills: any[], queryFields: rsvr.ProjectionField): any[] {
+  private processPostGenerateFields (bills: any[], queryFields: rsvr.ProjectionField, lang?: string): any[] {
     // generate billCode
     _.each(bills, b => {
       if (queryFields.hasPlainField('billCode') && !!b.billType) {
@@ -110,10 +110,17 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
     });
 
     // generate versions details
+    const i18nCode = (!!lang && lang.startsWith('zh')) ? 'zh' : 'en';
     _.each(bills, bill => {
       if (bill.versions && !_.isEmpty(bill.versions)) {
         _.each(bill.versions, ver => {
-          ver = _.merge(ver, textVersionMeta[ver.code]);
+          let obj = textVersionMeta[ver.code];
+          ver = _.merge(ver, {
+            chamber: obj.chamber,
+            code: obj.code,
+            name: obj[i18nCode].name,
+            description: obj[i18nCode].description
+          });
         });
       }
     });

@@ -88,10 +88,11 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
 
     let members = await this.helper.fetchObjects(ids, queryFields, lang);
     members && (members = _.filter(members, m => m));
-    return this.processPostGenerateFields(members, queryFields);
+    return this.processPostGenerateFields(members, queryFields, lang);
   }
 
-  private processPostGenerateFields (members: any[], queryFields: rsvr.ProjectionField): any[] {
+  private processPostGenerateFields (members: any[], queryFields: rsvr.ProjectionField, lang?: string): any[] {
+    const isZh: boolean = !!lang && lang.startsWith('zh');
     const delegateStates = new Set(['MP', 'GU', 'AS', 'VI', 'PI', 'DK', 'DC']);
 
     // generate roleTypeDisplay, title, titleLong, senatorClassDisplay for roles
@@ -99,25 +100,47 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
       if (m && m.congressRoles) {
         _.each(m.congressRoles, r => {
           if (r.chamber === 'h') {
-            r.roleTypeDisplay = 'Representative';
+            r.roleTypeDisplay = isZh
+              ? '眾議員'
+              : 'Representative';
 
             if (r.state === 'PR') {
-              r.titleLong = 'Resident Commissioner';
-              r.title = 'Commish.';
+              r.titleLong = isZh
+                ? '居民代表'
+                : 'Resident Commissioner';
+              r.title = isZh
+                ? '居民代表'
+                : 'Commish.';
             } else if (delegateStates.has(r.state)) {
-              r.titleLong = 'Delegate';
-              r.title = 'Rep.';
+              r.titleLong = isZh
+                ? '委任代表'
+                : 'Delegate';
+              r.title = isZh
+                ? '國會代表'
+                : 'Rep.';
             } else {
-              r.titleLong = 'Representative';
-              r.title = 'Rep.';
+              r.titleLong = isZh
+                ? '眾議員'
+                : 'Representative';
+              r.title = isZh
+                ? '眾議員'
+                : 'Rep.';
             }
           }
 
           if (r.chamber === 's') {
-            r.roleTypeDisplay = 'Senator';
-            r.titleLong = 'Senator';
-            r.title = 'Sen.';
-            r.senatorClassDisplay = `Class ${r.senatorClass}`;
+            r.roleTypeDisplay = isZh
+              ? '參議員'
+              : 'Senator';
+            r.titleLong = isZh
+              ? '參議員'
+              : 'Senator';
+            r.title = isZh
+              ? '參議員'
+              : 'Sen.';
+            r.senatorClassDisplay = isZh
+              ? `第${r.senatorClass}組`
+              : `Class ${r.senatorClass}`;
           }
         });
       }
