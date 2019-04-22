@@ -5,8 +5,8 @@ import { APIClient } from './APIClient';
 interface ISubscribeQuery {
   inputs: {
     email: string;
-    name: string;
-    list: 'ustw' | 'act';
+    name?: string;
+    list?: 'ustw' | 'act';
   };
 }
 
@@ -17,6 +17,12 @@ export class SubscribeResolver implements  rsvr.IResolverFunction<ISubscribeQuer
 
   public resolve ({ inputs }: ISubscribeQuery, queryFields: rsvr.ProjectionField) {
     const fLog = this.logger.in('resolve');
+
+    // use 'act' as  default list
+    if (!inputs.list) {
+      inputs.list = 'act';
+    }
+
     return APIClient.post('/subscribe/newsletter', { ...inputs })
       .then(() => true)
       .catch(() => false);
