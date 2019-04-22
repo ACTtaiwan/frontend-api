@@ -6,6 +6,7 @@ import { BillResolver } from './BillResolver';
 import { MemberResolver } from './MemberResolver';
 import { MapResolver } from './MapResolver';
 import { ArticleResolver } from './ArticleResolver';
+import { SubscribeResolver } from './SubscribeResolver';
 
 export type ResolveType = 'Query' | 'Mutation';
 export type ResolveInfo = GraphQLResolveInfo & { mergeInfo: MergeInfo };
@@ -105,6 +106,7 @@ export class ResolverRegistration {
       ResolverRegistration.register(new MemberResolver());
       ResolverRegistration.register(new MapResolver());
       ResolverRegistration.register(new ArticleResolver());
+      ResolverRegistration.register(new SubscribeResolver());
     }
     return ResolverRegistration._resolvers;
   }
