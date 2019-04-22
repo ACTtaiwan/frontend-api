@@ -3,9 +3,9 @@ import { mergeTypes } from 'merge-graphql-schemas';
 
 const subscribe = gql`
   input SubscribeInput {
-    list: String,
+    email: String!,
     name: String,
-    email: String!
+    list: String
   }
 
   type Mutation {
