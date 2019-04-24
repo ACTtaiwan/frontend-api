@@ -1,3 +1,6 @@
+# file meta data
+.DS_Store
+
 # package directories
 node_modules
 
