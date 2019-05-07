@@ -1,5 +1,5 @@
-import { gql } from 'apollo-server-lambda';
-import { mergeTypes } from 'merge-graphql-schemas';
+import { gql } from 'apollo-server-lambda'
+import { mergeTypes } from 'merge-graphql-schemas'
 
 const bills = gql`
   type Query {
@@ -10,12 +10,12 @@ const bills = gql`
       """
       Specify the returned data language
       """
-      lang: String,
+      lang: String
 
       """
       If ids is an empty array, then will only return queried bill ids as result
       """
-      ids: [ID],
+      ids: [ID]
 
       """
       The congress year
@@ -23,28 +23,28 @@ const bills = gql`
       congress: [Int]
     ): [Bill]
   }
-`;
+`
 
 const members = gql`
   type Query {
     """
     Get members
     """
-    members (
+    members(
       """
       Specify the returned data language
       """
-      lang: String,
+      lang: String
 
       """
       If ids is an empty array, then will only return queried member ids as result
       """
-      ids: [ID],
+      ids: [ID]
 
       """
       The congress year
       """
-      congress: [Int],
+      congress: [Int]
 
       """
       An array of state
@@ -52,23 +52,23 @@ const members = gql`
       states: [String]
     ): [Member]
   }
-`;
+`
 
 const maps = gql`
   type Query {
     """
     Get congressional district maps
     """
-    maps (
+    maps(
       """
       Specify the returned data language
       """
-      lang: String,
+      lang: String
 
       """
       If congress number is not provided, then return map utilities
       """
-      congress: Int,
+      congress: Int
 
       """
       Return the list of states and American territories
@@ -76,23 +76,23 @@ const maps = gql`
       stateList: Boolean
     ): [Map]
   }
-`;
+`
 
 const articles = gql`
   type Query {
     """
     Get articles
     """
-    articles (
+    articles(
       """
       The article list source - "act" or "ustw"
       """
-      list: String,
+      list: String
 
       """
       max num of articles to fetch (default: 10)
       """
-      limit: Int,
+      limit: Int
 
       """
       timestamp (in millisec); can use the ‘date’ value of the previous response to achieve pagination (default: now)
@@ -100,6 +100,6 @@ const articles = gql`
       before: String
     ): [Article]
   }
-`;
+`
 
-export default mergeTypes([bills, members, maps, articles]);
+export default mergeTypes([bills, members, maps, articles])

@@ -14,15 +14,10 @@ const subscribe = gql`
 `
 
 const donate = gql`
-  input DonateMetadata {
-    card_id: String
-    type: String
-    funding: String
-    last4: String
-    country: String
-    brand: String
-    client_ip: String
-    token_created: Int
+  type DonateResponse {
+    isSuccess: Boolean
+    statusCode: Int
+    errorMsg: String
   }
 
   input DonateInput {
@@ -31,11 +26,10 @@ const donate = gql`
     amount: Int
     currency: String
     description: String
-    metadata: DonateMetadata
   }
 
   type Mutation {
-    donate(inputs: DonateInput): Boolean
+    donate(inputs: DonateInput): DonateResponse
   }
 `
 
