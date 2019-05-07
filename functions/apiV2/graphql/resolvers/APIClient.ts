@@ -3,8 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import { Logger } from '../../util';
 import * as qs from 'qs';
-
-const awsConfig = require('../../../../config/aws.json');
+import config from '../../../../config/appConfig';
 
 export class APIClient {
   private static readonly logger = new Logger('APIHelper');
@@ -22,11 +21,11 @@ export class APIClient {
 
     const req: AxiosRequestConfig = {
       method,
-      baseURL: !!process.env.IS_LOCAL ? awsConfig.api.ENDPOINT_LOCAL : awsConfig.api.ENDPOINT,
+      baseURL: config.backendApi.ENDPOINT,
       url: path,
       headers: {
         'content-type': 'application/json',
-        'x-api-key': process.env.BACKEND_API_KEY
+        'x-api-key': config.backendApi.KEY
       },
       paramsSerializer: (params) => {
         params = JSON.parse(JSON.stringify(params));

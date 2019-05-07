@@ -2,10 +2,6 @@
   "metadata": {
     "REGION": "us-east-1"
   },
-  "api": {
-    "ENDPOINT": "https://api.uswatch.tw/dev",
-    "ENDPOINT_LOCAL": "http://localhost:9487"
-  },
   "s3": {
     "STATIC_FILES_BUCKET_NAME": "taiwanwatch-static"
   }

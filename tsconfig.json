@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
+    // "module": "commonjs",
+    "target": "es5",
     "noImplicitAny": false,
     "sourceMap": true,
     "lib": [
       "esnext.asynciterable",
-      "es2015"
+      // "es2015"
+      "es5",
+      "es6"
     ],
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "outDir": "./.build",
     "allowSyntheticDefaultImports": true
   }

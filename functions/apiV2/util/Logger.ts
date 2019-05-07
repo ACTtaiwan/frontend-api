@@ -1,4 +1,5 @@
 import { inspect } from 'util';
+import config from '../../../config/appConfig';
 
 export class Logger {
   protected _methodName: string;
@@ -21,7 +22,7 @@ export class Logger {
   }
 
   public static log (msg: any, prefix?: string) {
-    const colors = process.env.IS_LOCAL ? true : false;
+    const colors = config.isLocal;
     if (typeof msg !== 'string') {
       msg = inspect(msg, { depth: null, colors: colors });
     }
