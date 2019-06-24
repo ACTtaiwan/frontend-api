@@ -13,7 +13,9 @@
     "package": "node_modules/serverless/bin/serverless package",
     "ts-node": "node node_modules/ts-node/dist/bin.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "tslint --project .",
+    "lintfix": "tslint --fix --project ."
   },
   "keywords": [],
   "author": "Jerry Hsu <hsuyachieh@gmail.com>",

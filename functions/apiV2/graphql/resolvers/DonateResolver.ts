@@ -1,6 +1,6 @@
-import * as rsvr from './ResolverRegistration'
-import * as util from '../../util'
-import { APIClient } from './APIClient'
+import * as rsvr from './ResolverRegistration';
+import * as util from '../../util';
+import { APIClient } from './APIClient';
 
 interface IDonateRequest {
   inputs: {
@@ -27,16 +27,16 @@ export class DonateResolver implements  rsvr.IResolverFunction<IDonateRequest> {
 
     return APIClient.post('/stripe/charge', { ...inputs })
       .then(data => {
-        console.log("0000000", data);
+        console.log('0000000', data);
 
         return {
           isSuccess: true,
           statusCode: 200,
-          errorMsg: ""
+          errorMsg: ''
         };
       })
       .catch(({response}) => {
-        console.log("111111", response);
+        console.log('111111', response);
 
         return {
           isSuccess: false,

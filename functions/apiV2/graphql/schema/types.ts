@@ -1,5 +1,5 @@
-import { gql } from 'apollo-server-lambda'
-import { mergeTypes } from 'merge-graphql-schemas'
+import { gql } from 'apollo-server-lambda';
+import { mergeTypes } from 'merge-graphql-schemas';
 
 const billType = gql`
   """
@@ -11,7 +11,7 @@ const billType = gql`
     name: String
     display: String
   }
-`
+`;
 
 const action = gql`
   """
@@ -24,7 +24,7 @@ const action = gql`
     description: String
     name: String
   }
-`
+`;
 
 const billTextDocument = gql`
   """
@@ -34,7 +34,7 @@ const billTextDocument = gql`
     s3Entity: String
     contentType: String
   }
-`
+`;
 
 const billTextVersion = gql`
   """
@@ -48,7 +48,7 @@ const billTextVersion = gql`
     name: String
     documents: [BillTextDocument]
   }
-`
+`;
 
 const billTracker = gql`
   """
@@ -58,7 +58,7 @@ const billTracker = gql`
     selected: Boolean
     stepName: String
   }
-`
+`;
 
 const billSummary = gql`
   """
@@ -68,7 +68,7 @@ const billSummary = gql`
     title: String
     paragraphs: [String]
   }
-`
+`;
 
 const tag = gql`
   """
@@ -79,7 +79,7 @@ const tag = gql`
     tag: String
     bills: [BillType]
   }
-`
+`;
 
 const article = gql`
   """
@@ -97,7 +97,7 @@ const article = gql`
     date: String
     sites: [String]
   }
-`
+`;
 
 const profilePicture = gql`
   """
@@ -109,7 +109,7 @@ const profilePicture = gql`
     medium: String
     original: String
   }
-`
+`;
 
 const congressRole = gql`
   """
@@ -130,7 +130,7 @@ const congressRole = gql`
     roleTypeDisplay: String
     senatorClassDisplay: String
   }
-`
+`;
 
 const member = gql`
   """
@@ -140,7 +140,9 @@ const member = gql`
     id: ID
     prefetchIds: [ID]
     firstName: String
+    firstName_zh: String
     lastName: String
+    lastName_zh: String
     middleName: String
     gender: String
 
@@ -168,7 +170,7 @@ const member = gql`
     billId: String
     dateCosponsored: String
   }
-`
+`;
 
 const bill = gql`
   """
@@ -182,6 +184,7 @@ const bill = gql`
     billNumber: Int
     billCode: String
     title: String
+    title_zh: String
     actions: [Action]
     actionsAll: [Action]
     introducedDate: String
@@ -199,7 +202,7 @@ const bill = gql`
     dateCosponsored: String
     member: Member
   }
-`
+`;
 
 const map = gql`
   """
@@ -212,7 +215,7 @@ const map = gql`
     fipsToState: String
     states: String
   }
-`
+`;
 
 export default mergeTypes([
   bill,
@@ -228,4 +231,4 @@ export default mergeTypes([
   member,
   profilePicture,
   congressRole
-])
+]);

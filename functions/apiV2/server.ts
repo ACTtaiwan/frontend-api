@@ -1,4 +1,4 @@
-import { ApolloServer, makeExecutableSchema, IResolvers } from 'apollo-server-lambda';
+import { ApolloServer, makeExecutableSchema } from 'apollo-server-lambda';
 import { Logger } from './util';
 import { schema, resolvers } from './graphql';
 

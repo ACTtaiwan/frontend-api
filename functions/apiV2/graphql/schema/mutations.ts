@@ -1,5 +1,5 @@
-import { gql } from 'apollo-server-lambda'
-import { mergeTypes } from 'merge-graphql-schemas'
+import { gql } from 'apollo-server-lambda';
+import { mergeTypes } from 'merge-graphql-schemas';
 
 const subscribe = gql`
   input SubscribeInput {
@@ -11,7 +11,7 @@ const subscribe = gql`
   type Mutation {
     subscribe(inputs: SubscribeInput): Boolean
   }
-`
+`;
 
 const donate = gql`
   type DonateResponse {
@@ -31,6 +31,6 @@ const donate = gql`
   type Mutation {
     donate(inputs: DonateInput): DonateResponse
   }
-`
+`;
 
-export default mergeTypes([subscribe, donate])
+export default mergeTypes([subscribe, donate]);

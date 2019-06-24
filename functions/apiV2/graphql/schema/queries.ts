@@ -1,5 +1,5 @@
-import { gql } from 'apollo-server-lambda'
-import { mergeTypes } from 'merge-graphql-schemas'
+import { gql } from 'apollo-server-lambda';
+import { mergeTypes } from 'merge-graphql-schemas';
 
 const bills = gql`
   type Query {
@@ -23,7 +23,7 @@ const bills = gql`
       congress: [Int]
     ): [Bill]
   }
-`
+`;
 
 const members = gql`
   type Query {
@@ -52,7 +52,7 @@ const members = gql`
       states: [String]
     ): [Member]
   }
-`
+`;
 
 const maps = gql`
   type Query {
@@ -76,7 +76,7 @@ const maps = gql`
       stateList: Boolean
     ): [Map]
   }
-`
+`;
 
 const articles = gql`
   type Query {
@@ -100,6 +100,6 @@ const articles = gql`
       before: String
     ): [Article]
   }
-`
+`;
 
-export default mergeTypes([bills, members, maps, articles])
+export default mergeTypes([bills, members, maps, articles]);
