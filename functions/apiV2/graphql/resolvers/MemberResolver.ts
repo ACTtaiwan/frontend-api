@@ -27,7 +27,8 @@ export class MemberResolver implements  rsvr.IResolverFunction<IMemberQuery>, II
         apiField: 'cosponsoredBillIds'
       },
       'cosponsorProperty': {
-        apiField: 'cosponsoredBills#date'
+        apiField: 'cosponsoredBills',
+        apiSubFields: ['cosponsoredBills#date'],
       }
     },
     remappedFields: {}
