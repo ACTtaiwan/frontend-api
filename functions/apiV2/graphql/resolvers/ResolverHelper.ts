@@ -105,10 +105,10 @@ export class ResolverHelper {
     const fLog = this.logger.in('resolveS3Fields');
     const desc = this.fieldsDesc;
     const gqlS3Fields = _.intersection(queryFields.names, _.keys(desc.s3Fields));
-    fLog.log(`gqlS3Fields = ${JSON.stringify(gqlS3Fields)}`);
+    // fLog.log(`gqlS3Fields = ${JSON.stringify(gqlS3Fields)}`);
 
     const s3QryFields = _.pick(desc.s3Fields, gqlS3Fields);
-    fLog.log(`s3QryFields = ${JSON.stringify(s3QryFields)}`);
+    // fLog.log(`s3QryFields = ${JSON.stringify(s3QryFields)}`);
 
     if (!!gqlObj.s3Entity) {
       let s3Obj = {};
