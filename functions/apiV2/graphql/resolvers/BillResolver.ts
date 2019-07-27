@@ -37,7 +37,7 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
         isOneToOne: true
       },
       'cosponsors': {
-        apiField: 'cosponsorIds',
+        apiField: 'cosponsors#date',
         apiSubFields: ['cosponsors#date'],
         fetcher: new CosponsorResolver()
       },
@@ -127,8 +127,8 @@ export class BillResolver implements rsvr.IResolverFunction<IBillQuery>, IIdObje
 
     // generate cosponsors
     _.each(bills, bill => {
-      if (!_.isEmpty(bill.cosponsors) && !_.isEmpty(bill['cosponsors#date'])) {
-        const m = _.keyBy(bill['cosponsors#date'], '_id');
+      if (!_.isEmpty(bill.cosponsors) && !_.isEmpty(bill['cosponsors'])) {
+        const m = _.keyBy(bill['cosponsors'], '_id');
         bill.cosponsors = _.map(bill.cosponsors, co => ({
           dateCosponsored: m[co.id].date,
           member: co

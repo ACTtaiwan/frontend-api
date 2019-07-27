@@ -165,9 +165,16 @@ export class ResolverHelper {
         }
 
         const isOneToOne = fdesc.isOneToOne;
-        const idx: string[] =  isOneToOne ? [ gqlObj[k] ] :  gqlObj[k];
-        const objs = await fdesc.fetcher.fetchObjects(idx, projField, lang);
-        gqlObj[k] = isOneToOne ? _.head(objs) : objs;
+        const items: any[] =  gqlObj[k]; // isOneToOne ? [ gqlObj[k] ] :  gqlObj[k];
+        if (_.every(items, x => !_.isString(x))) {
+          const idx = _.map(items, x => x['_id']);
+          const apiObjs = await fdesc.fetcher.fetchObjects(idx, projField, lang);
+          const objs = _.zipWith(items, apiObjs, (x, y) => _.merge(x, y));
+          gqlObj[k] = isOneToOne ? _.head(objs) : objs;
+        } else {
+          const objs = await fdesc.fetcher.fetchObjects(items, projField, lang);
+          gqlObj[k] = isOneToOne ? _.head(objs) : objs;
+        }
       }
       return gqlObj;
     });
