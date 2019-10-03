@@ -172,7 +172,7 @@ export class ResolverHelper {
           const objs = _.zipWith(items, apiObjs, (x, y) => _.merge(x, y));
           gqlObj[k] = isOneToOne ? _.head(objs) : objs;
         } else {
-          const objs = await fdesc.fetcher.fetchObjects(items, projField, lang);
+          const objs = await fdesc.fetcher.fetchObjects(isOneToOne ? [items] : items, projField, lang);
           gqlObj[k] = isOneToOne ? _.head(objs) : objs;
         }
       }
