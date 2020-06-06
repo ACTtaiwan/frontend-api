@@ -58,7 +58,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "apollo-server-express": "^2.6.9",
+    "apollo-server-express": "^2.14.2",
     "apollo-server-lambda": "^2.6.9",
     "applicationinsights": "^1.4.0",
     "aws-sdk": "^2.493.0",
