@@ -70,7 +70,7 @@
     "graphql": "^14.4.2",
     "graphql-server-lambda": "^1.4.1",
     "joi": "^10.6.0",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.19",
     "merge-graphql-schemas": "^1.5.8",
     "nodemon": "^1.19.1",
     "qs": "^6.7.0",
